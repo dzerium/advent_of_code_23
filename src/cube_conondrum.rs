@@ -17,9 +17,10 @@ impl GameRecord {
         }
     }
     fn is_valid(&self) -> bool {
-        !&self.sets.iter().any(|x| {
-			x.0 > COLOR_LIMIT.0 || x.1 > COLOR_LIMIT.1 || x.2 > COLOR_LIMIT.2
-		})
+        !&self
+            .sets
+            .iter()
+            .any(|x| x.0 > COLOR_LIMIT.0 || x.1 > COLOR_LIMIT.1 || x.2 > COLOR_LIMIT.2)
     }
     fn pow(&self) -> u64 {
         let r_min = self.sets.iter().map(|x| x.0).max().unwrap_or(0);
@@ -62,14 +63,13 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
             for color in colors {
                 let (num, color) =
                     sscanf::scanf!(color.trim(), "{} {}", u8, String).expect("Should have color");
-          
+
                 match color {
                     color if color == "red" => c.0 += num,
-					color if color == "green" => c.1 += num,
-					color if color == "blue" => c.2 += num,
-					_ => panic!("Invalid color"),
+                    color if color == "green" => c.1 += num,
+                    color if color == "blue" => c.2 += num,
+                    _ => panic!("Invalid color"),
                 };
-  
             }
             record.sets.push(c);
         }
