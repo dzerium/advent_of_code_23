@@ -18,8 +18,9 @@ fn main() {
         }
     };
 
-    let sum = cube_conondrum(content);
-    println!("sum : {}", sum);
+    let records = cube_conondrum(content);
+    let (sum, pow) = validate_records(&records);
+    println!("sum : {}, pow {}", sum, pow);
     wait_exit();
 }
 

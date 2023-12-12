@@ -1,10 +1,10 @@
 use sscanf;
 
-#[derive(Debug)]
-struct Colors(u8, u8, u8);
+#[derive(Debug,Clone)]
+pub struct Colors(u8, u8, u8);
 
-#[derive(Debug)]
-struct GameRecord {
+#[derive(Debug,Clone)]
+pub struct GameRecord {
     id: usize,
     sets: Vec<Colors>,
 }
@@ -20,11 +20,18 @@ impl GameRecord {
 
 const COLOR_LIMIT: Colors = Colors(12, 13, 14);
 
-fn validate_records(records: Vec<GameRecord>) -> u32 {
+pub fn validate_records(records: &Vec<GameRecord>) -> (u32, u64) {
     let mut sum = 0;
+    let mut pow : u64 = 0;
     for record in records {
         let mut is_valid = true;
-        for set in record.sets {
+        
+        let r_min = record.sets.iter().map(|x| x.0).max().unwrap_or(0);
+        let g_min = record.sets.iter().map(|x| x.1).max().unwrap_or(0);
+        let b_min = record.sets.iter().map(|x| x.2).max().unwrap_or(0);
+
+        pow = pow + (r_min as u64 * g_min as u64 * b_min as u64);
+        for set in &record.sets {
             if set.0 > COLOR_LIMIT.0 || set.1 > COLOR_LIMIT.1 || set.2 > COLOR_LIMIT.2 {
                 println!("Invalid set: {:?}", set);
                 is_valid = false;
@@ -34,10 +41,12 @@ fn validate_records(records: Vec<GameRecord>) -> u32 {
             sum += record.id as u32;
         }
     }
-    sum
+    (sum, pow)
 }
 
-pub fn cube_conondrum(content: String) -> u32 {
+
+
+pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
     let mut records: Vec<GameRecord> = Vec::new();
 
     for (i, line) in content.lines().enumerate() {
@@ -58,7 +67,7 @@ pub fn cube_conondrum(content: String) -> u32 {
                     sscanf::scanf!(color.trim(), "{} {}", u8, String).expect("Should have color");
 
                 // ! TODO: use match
-                if (color == "red") {
+                if  color == "red" {
                     r += num;
                 } else if (color == "green") {
                     g += num;
@@ -71,7 +80,7 @@ pub fn cube_conondrum(content: String) -> u32 {
         }
         records.push(record);
     }
-    validate_records(records)
+    records
 }
 
 #[test]
@@ -85,6 +94,9 @@ fn cube_test_1() {
         "#
     .trim();
 
-    let sum = cube_conondrum(input.to_string());
+    let records = cube_conondrum(input.to_string());
+    let (sum, pow) =  validate_records(&records);
+
     assert_eq!(sum, 8);
+    assert_eq!(pow, 2286);
 }
