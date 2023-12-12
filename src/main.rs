@@ -1,6 +1,5 @@
 use std::env;
 use std::io;
-use regex::{RegexSet, Regex};
 
 mod utils;
 
@@ -35,76 +34,15 @@ fn replace (line: &str) -> String {
         .replace("nine", "nine9nine")
 }
 
-
-fn regex_words_to_num (line: &str) -> Vec<(usize, u32)> {
-    let set = RegexSet::new(&[
-        r"one",
-        r"two",
-        r"three",
-        r"four",
-        r"five",
-        r"six",
-        r"seven",
-        r"eight",
-        r"nine",
-    ]).unwrap();
-
-    let regexes: Vec<_> = set
-        .patterns()
-        .iter()
-        .map(|pat| Regex::new(pat).unwrap())
-        .collect();
-
-    let  matches: Vec<(usize, u32)> = set
-        .matches(line)
-        .into_iter()
-        .map(|index| &regexes[index])
-        .map(|re| {
-            let m = re.find(line).unwrap().as_str();
-            (
-                line.find(m).unwrap(),  
-                match m {
-		            "one"   => 1,
-		            "two"   => 2,
-		            "three" => 3,
-		            "four"  => 4,
-		            "five"  => 5,
-		            "six"   => 6,
-		            "seven" => 7,
-		            "eight" => 8,
-		            "nine"  => 9,
-		            _       => panic!("SHould not happen!")
-                })
-        })
-        .collect();
-
-     matches
-}
-
-fn regex_get_num(line: &str) -> Vec<(usize, u32)> {
-    let re = Regex::new(r"[0-9]").unwrap();
-    let mut idx_matches : Vec<(usize, u32)> = Vec::new();
-
-    for cap in re.captures_iter(line) {
-        let m = cap.get(0).unwrap().as_str();
-        let number = m.parse::<u32>().unwrap();
-        let idx = line.find(m).unwrap();
-
-        idx_matches.push((idx, number));
-    }
-
-    idx_matches
-}
-
 fn get_number (line: &str) -> u32 {
     let mut first = '\0';
     let mut last = '\0';
     for  (_i, c) in line.chars().enumerate() {
-        if (c.is_digit(10)) && first == '\0'{
+        if c.is_digit(10) && first == '\0'{
             first = c;
             last = c;
         }
-        else if (c.is_digit(10)) {
+        else if c.is_digit(10) {
 			last = c;
 		}
     }
