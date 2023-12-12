@@ -17,9 +17,22 @@ fn main() {
         }
     };
 
-    trebuchet(content);
-    
+    let sum = trebuchet(content);
+    println!("sum : {}", sum);
     wait_exit();
+}
+
+fn replace (line: &str) -> String {
+    line.to_lowercase()
+        .replace("one", "one1one")
+        .replace("two", "two2two")
+        .replace("three", "three3three")
+        .replace("four", "four4four")
+        .replace("five", "five5five")
+        .replace("six", "six6six")
+        .replace("seven", "seven7seven")
+        .replace("eight", "eight8eight")
+        .replace("nine", "nine9nine")
 }
 
 
@@ -83,31 +96,28 @@ fn regex_get_num(line: &str) -> Vec<(usize, u32)> {
     idx_matches
 }
 
-fn get_number(mut numbers: Vec<(usize, u32)>) -> u32 {
-    let mut result = 0;
-
-    numbers.sort_by_key(|k| k.0);
-    if !numbers.is_empty() {
-	    result = numbers[0].1 * 10 + numbers[numbers.len() - 1].1;
+fn get_number (line: &str) -> u32 {
+    let mut first = '\0';
+    let mut last = '\0';
+    for  (_i, c) in line.chars().enumerate() {
+        if (c.is_digit(10)) && first == '\0'{
+            first = c;
+            last = c;
+        }
+        else if (c.is_digit(10)) {
+			last = c;
+		}
     }
-    result
+    first.to_digit(10).unwrap() * 10 + last.to_digit(10).unwrap()
 }
 
 fn trebuchet(content: String) -> u32 {
     let mut sum: u32 = 0;
+    let transed = replace(&content);
 
-    for (_i, line) in content.lines().enumerate() {
-
-        let mut num_matches = regex_get_num(line);
-        let mut word_matches = regex_words_to_num(line);
-
-        num_matches.append(&mut word_matches);
-
-        let total = get_number(num_matches.clone());
-        sum += total;
-        println!("{}: {:?} {:?} {} {}", line, num_matches, word_matches, total, sum);
+    for (_i, line) in transed.lines().enumerate() {
+        sum += get_number(line);
     }
-    println!("Trebuchet: {}", sum);
     sum
 }
 
