@@ -17,14 +17,9 @@ impl GameRecord {
         }
     }
     fn is_valid(&self) -> bool {
-        let mut is_valid = true;
-        for set in &self.sets {
-            if set.0 > COLOR_LIMIT.0 || set.1 > COLOR_LIMIT.1 || set.2 > COLOR_LIMIT.2 {
-                println!("Invalid set: {:?}", set);
-                is_valid = false;
-            }
-        }
-        is_valid
+        !&self.sets.iter().any(|x| {
+			x.0 > COLOR_LIMIT.0 || x.1 > COLOR_LIMIT.1 || x.2 > COLOR_LIMIT.2
+		})
     }
     fn pow(&self) -> u64 {
         let r_min = self.sets.iter().map(|x| x.0).max().unwrap_or(0);
@@ -62,25 +57,21 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
 
         for set in sets {
             let colors = set.split(',').into_iter();
-            let mut r = 0u8;
-            let mut g = 0u8;
-            let mut b = 0u8;
+            let mut c = Colors(0, 0, 0);
 
             for color in colors {
                 let (num, color) =
                     sscanf::scanf!(color.trim(), "{} {}", u8, String).expect("Should have color");
-
-                // ! TODO: use match
-                if color == "red" {
-                    r += num;
-                } else if color == "green" {
-                    g += num;
-                } else if color == "blue" {
-                    b += num;
-                }
+          
+                match color {
+                    color if color == "red" => c.0 += num,
+					color if color == "green" => c.1 += num,
+					color if color == "blue" => c.2 += num,
+					_ => panic!("Invalid color"),
+                };
+  
             }
-            let color = Colors(r, g, b);
-            record.sets.push(color);
+            record.sets.push(c);
         }
         records.push(record);
     }
