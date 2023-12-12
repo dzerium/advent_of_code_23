@@ -14,22 +14,7 @@ fn main() {
 }
 
 
-fn strng_to_u32 (line: &str) -> u32 {
-    match line {
-		"one"   => 1,
-		"two"   => 2,
-		"three" => 3,
-		"four"  => 4,
-		"five"  => 5,
-		"six"   => 6,
-		"seven" => 7,
-		"eight" => 8,
-		"nine"  => 9,
-		_       => 0,
-    }
-}
-
-fn regex_trans (line: &str) -> Vec<(usize, u32)> {
+fn regex_words_to_num (line: &str) -> Vec<(usize, u32)> {
     let set = RegexSet::new(&[
         r"one",
         r"two",
@@ -54,14 +39,27 @@ fn regex_trans (line: &str) -> Vec<(usize, u32)> {
         .map(|index| &regexes[index])
         .map(|re| {
             let m = re.find(line).unwrap().as_str();
-            (line.find(m).unwrap(), strng_to_u32(m))
+            (
+                line.find(m).unwrap(),  
+                match m {
+		            "one"   => 1,
+		            "two"   => 2,
+		            "three" => 3,
+		            "four"  => 4,
+		            "five"  => 5,
+		            "six"   => 6,
+		            "seven" => 7,
+		            "eight" => 8,
+		            "nine"  => 9,
+		            _       => panic!("SHould not happen!")
+                })
         })
         .collect();
 
      matches
 }
 
-fn regex_get_number(line: &str) -> Vec<(usize, u32)> {
+fn regex_get_num(line: &str) -> Vec<(usize, u32)> {
     let re = Regex::new(r"[0-9]").unwrap();
     let mut idx_matches : Vec<(usize, u32)> = Vec::new();
 
@@ -102,13 +100,13 @@ fn trebuchet(file: &str) {
 
     for (_i, line) in content.lines().enumerate() {
 
-        let mut num_matches = regex_get_number(line);
-        let mut word_matches = regex_trans(line);
+        let mut num_matches = regex_get_num(line);
+        let mut word_matches = regex_words_to_num(line);
 
         num_matches.append(&mut word_matches);
         let total = get_number(num_matches.clone());
         sum += total;
-        println!("{}: {:?} {:?} {}", line, num_matches, word_matches, total);
+        // println!("{}: {:?} {:?} {} {}", line, num_matches, word_matches, total, sum);
     }
     println!("Trebuchet: {}", sum);
 }
@@ -123,14 +121,14 @@ fn wait_exit() {
 
 #[test]
 fn it_works_9() {
-    let idx_matches = regex_trans("eightwo");
+    let idx_matches = regex_words_to_num("eightwo");
     println!("{:?}", idx_matches);
 }
 
 #[test]
 fn it_works_10() {
-    let mut num_matches = regex_get_number("eightwothree");
-    let mut word_matches = regex_trans("eightwothree");
+    let mut num_matches = regex_get_num("eightwothree");
+    let mut word_matches = regex_words_to_num("eightwothree");
     println!("{:?}", num_matches);
     println!("{:?}", word_matches);
     num_matches.append(&mut word_matches);
