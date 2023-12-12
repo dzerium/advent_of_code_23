@@ -109,7 +109,7 @@ fn gear_test_1() {
     .trim();
 
     let (schema, parts) = gear_ratio(input.to_string());
-    println!("{:?}", schema);
-    //let sum = validate_parts(&parts, &schema);
-    assert_eq!(4361, 4361);
+   
+    let sum = validate_parts(&parts, &schema);
+    assert_eq!(sum, 4361);
 }

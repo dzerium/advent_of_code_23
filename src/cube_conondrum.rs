@@ -52,7 +52,6 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
     for (i, line) in content.lines().enumerate() {
         // We're sure that ids are continouos
         let mut record = GameRecord::new(i + 1);
-
         let sets = line.split(':').nth(1).expect("Should have sets").trim();
         let sets = sets.split(';').into_iter();
 
