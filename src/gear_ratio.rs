@@ -62,7 +62,6 @@ pub fn gear_ratio(content: String) -> (Vec<Vec<char>>, Vec<Part>) {
     let mut schema = Vec::<Vec<char>>::new();
     let mut parts = Vec::<Part>::new();
 
-    env::set_var("RUST_BACKTRACE", "1");
     content
         .split('\n')
         .into_iter()
