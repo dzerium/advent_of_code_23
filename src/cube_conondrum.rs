@@ -64,10 +64,10 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
                 let (num, color) =
                     sscanf::scanf!(color.trim(), "{} {}", u8, String).expect("Should have color");
 
-                match color {
-                    color if color == "red" => c.0 += num,
-                    color if color == "green" => c.1 += num,
-                    color if color == "blue" => c.2 += num,
+                match color.as_str() {
+                    "red" => c.0 += num,
+                    "green" => c.1 += num,
+                    "blue" => c.2 += num,
                     _ => panic!("Invalid color"),
                 };
             }
