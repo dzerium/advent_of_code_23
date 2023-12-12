@@ -8,7 +8,16 @@ use utils::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
-    trebuchet("../../input/1_trebuchet.txt");
+
+     let content = match file::read_file("../../input/1_trebuchet.txt") {
+        Ok(contents) => contents,
+        Err(e) => {
+            eprintln!("Debug info: {:?}", e);
+            return;
+        }
+    };
+
+    trebuchet(content);
     
     wait_exit();
 }
@@ -78,24 +87,13 @@ fn get_number(mut numbers: Vec<(usize, u32)>) -> u32 {
     let mut result = 0;
 
     numbers.sort_by_key(|k| k.0);
-    
     if !numbers.is_empty() {
-	    //ret = first.to_digit(10).unwrap() * 10 + last.to_digit(10).unwrap();
 	    result = numbers[0].1 * 10 + numbers[numbers.len() - 1].1;
     }
     result
 }
 
-fn trebuchet(file: &str) {
-    let content = match file::read_file(file) {
-        Ok(contents) => contents,
-        Err(e) => {
-            println!("Error reading {}:) {}", file, e);
-            eprintln!("Debug info: {:?}", e);
-            return;
-        }
-    };
-
+fn trebuchet(content: String) -> u32 {
     let mut sum: u32 = 0;
 
     for (_i, line) in content.lines().enumerate() {
@@ -104,11 +102,13 @@ fn trebuchet(file: &str) {
         let mut word_matches = regex_words_to_num(line);
 
         num_matches.append(&mut word_matches);
+
         let total = get_number(num_matches.clone());
         sum += total;
-        // println!("{}: {:?} {:?} {} {}", line, num_matches, word_matches, total, sum);
+        println!("{}: {:?} {:?} {} {}", line, num_matches, word_matches, total, sum);
     }
     println!("Trebuchet: {}", sum);
+    sum
 }
 
 fn wait_exit() {
@@ -120,18 +120,30 @@ fn wait_exit() {
 
 
 #[test]
-fn it_works_9() {
-    let idx_matches = regex_words_to_num("eightwo");
-    println!("{:?}", idx_matches);
+fn it_works_1() {
+  let input = r#"
+    1abc2
+    pqr3stu8vwx
+    a1b2c3d4e5f
+    treb7uchet
+    "#.trim();
+
+    let sum = trebuchet(input.to_string());
+    assert_eq!(sum, 142);
 }
 
 #[test]
-fn it_works_10() {
-    let mut num_matches = regex_get_num("eightwothree");
-    let mut word_matches = regex_words_to_num("eightwothree");
-    println!("{:?}", num_matches);
-    println!("{:?}", word_matches);
-    num_matches.append(&mut word_matches);
-    let result = get_number(num_matches);
-    assert_eq!(result, 83);
+fn it_works_2() {
+  let input = r#"
+    two1nine
+    eightwothree
+    abcone2threexyz
+    xtwone3four
+    4nineeightseven2
+    zoneight234
+    7pqrstsixteen
+    "#.trim();
+
+    let sum = trebuchet(input.to_string());
+    assert_eq!(sum, 281);
 }
