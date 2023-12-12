@@ -1,12 +1,12 @@
-mod utils;
-mod trebuchet;
 mod cube_conondrum;
+mod trebuchet;
+mod utils;
 
+use cube_conondrum::*;
 use std::env;
 use std::io;
-use utils::*;
 use trebuchet::*;
-use cube_conondrum::*;
+use utils::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
@@ -24,11 +24,9 @@ fn main() {
     wait_exit();
 }
 
-
 fn wait_exit() {
     let mut buffer = String::new();
     let stdin = io::stdin();
     println!("Press any key to exit");
     stdin.read_line(&mut buffer).expect("Cannot read line");
 }
-
