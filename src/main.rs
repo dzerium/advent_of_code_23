@@ -1,16 +1,14 @@
-mod cube_conondrum;
-mod trebuchet;
+mod gear_ratio;
 mod utils;
 
-use cube_conondrum::*;
+use gear_ratio::*;
 use std::env;
 use std::io;
-use trebuchet::*;
 use utils::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
-    let content = match file::read_file("../../input/2_cube.txt") {
+    let content = match file::read_file("../../input/3_gear.txt") {
         Ok(contents) => contents,
         Err(e) => {
             eprintln!("Debug info: {:?}", e);
@@ -18,9 +16,9 @@ fn main() {
         }
     };
 
-    let records = cube_conondrum(content);
-    let (sum, pow) = validate_records(&records);
-    println!("sum : {}, pow {}", sum, pow);
+    let (schema, parts) = gear_ratio(content);
+    let sum = validate_parts(&parts, &schema);
+    println!("sum: {}", sum);
     wait_exit();
 }
 
