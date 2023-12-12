@@ -1,6 +1,6 @@
 use sscanf;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Colors(u8, u8, u8);
 
 #[derive(Debug, Clone)]
@@ -31,7 +31,7 @@ impl GameRecord {
         let g_min = self.sets.iter().map(|x| x.1).max().unwrap_or(0);
         let b_min = self.sets.iter().map(|x| x.2).max().unwrap_or(0);
 
-        (r_min as u64 * g_min as u64 * b_min as u64)
+        r_min as u64 * g_min as u64 * b_min as u64
     }
 }
 
@@ -73,9 +73,9 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
                 // ! TODO: use match
                 if color == "red" {
                     r += num;
-                } else if (color == "green") {
+                } else if color == "green" {
                     g += num;
-                } else if (color == "blue") {
+                } else if color == "blue" {
                     b += num;
                 }
             }
