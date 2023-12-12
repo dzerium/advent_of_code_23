@@ -10,7 +10,7 @@ use cube_conondrum::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
-    let content = match file::read_file("../../input/1_trebuchet.txt") {
+    let content = match file::read_file("../../input/2_cube.txt") {
         Ok(contents) => contents,
         Err(e) => {
             eprintln!("Debug info: {:?}", e);
@@ -18,7 +18,7 @@ fn main() {
         }
     };
 
-    let sum = trebuchet(content);
+    let sum = cube_conondrum(content);
     println!("sum : {}", sum);
     wait_exit();
 }
