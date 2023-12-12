@@ -1,9 +1,9 @@
 use sscanf;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Colors(u8, u8, u8);
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct GameRecord {
     id: usize,
     sets: Vec<Colors>,
@@ -16,35 +16,39 @@ impl GameRecord {
             sets: Vec::new(),
         }
     }
+    fn is_valid(&self) -> bool {
+        let mut is_valid = true;
+        for set in &self.sets {
+            if set.0 > COLOR_LIMIT.0 || set.1 > COLOR_LIMIT.1 || set.2 > COLOR_LIMIT.2 {
+                println!("Invalid set: {:?}", set);
+                is_valid = false;
+            }
+        }
+        is_valid
+    }
+    fn pow(&self) -> u64 {
+        let r_min = self.sets.iter().map(|x| x.0).max().unwrap_or(0);
+        let g_min = self.sets.iter().map(|x| x.1).max().unwrap_or(0);
+        let b_min = self.sets.iter().map(|x| x.2).max().unwrap_or(0);
+
+        (r_min as u64 * g_min as u64 * b_min as u64)
+    }
 }
 
 const COLOR_LIMIT: Colors = Colors(12, 13, 14);
 
 pub fn validate_records(records: &Vec<GameRecord>) -> (u32, u64) {
     let mut sum = 0;
-    let mut pow : u64 = 0;
+    let mut pow: u64 = 0;
     for record in records {
-        let mut is_valid = true;
-        
-        let r_min = record.sets.iter().map(|x| x.0).max().unwrap_or(0);
-        let g_min = record.sets.iter().map(|x| x.1).max().unwrap_or(0);
-        let b_min = record.sets.iter().map(|x| x.2).max().unwrap_or(0);
+        pow = pow + record.pow();
 
-        pow = pow + (r_min as u64 * g_min as u64 * b_min as u64);
-        for set in &record.sets {
-            if set.0 > COLOR_LIMIT.0 || set.1 > COLOR_LIMIT.1 || set.2 > COLOR_LIMIT.2 {
-                println!("Invalid set: {:?}", set);
-                is_valid = false;
-            }
-        }
-        if is_valid {
+        if record.is_valid() {
             sum += record.id as u32;
         }
     }
     (sum, pow)
 }
-
-
 
 pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
     let mut records: Vec<GameRecord> = Vec::new();
@@ -67,7 +71,7 @@ pub fn cube_conondrum(content: String) -> Vec<GameRecord> {
                     sscanf::scanf!(color.trim(), "{} {}", u8, String).expect("Should have color");
 
                 // ! TODO: use match
-                if  color == "red" {
+                if color == "red" {
                     r += num;
                 } else if (color == "green") {
                     g += num;
@@ -95,7 +99,7 @@ fn cube_test_1() {
     .trim();
 
     let records = cube_conondrum(input.to_string());
-    let (sum, pow) =  validate_records(&records);
+    let (sum, pow) = validate_records(&records);
 
     assert_eq!(sum, 8);
     assert_eq!(pow, 2286);
