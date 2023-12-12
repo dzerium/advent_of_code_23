@@ -8,7 +8,7 @@ use utils::*;
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
 
-     let content = match file::read_file("../../input/1_trebuchet.txt") {
+    let content = match file::read_file("../../input/1_trebuchet.txt") {
         Ok(contents) => contents,
         Err(e) => {
             eprintln!("Debug info: {:?}", e);
@@ -21,7 +21,7 @@ fn main() {
     wait_exit();
 }
 
-fn replace (line: &str) -> String {
+fn replace(line: &str) -> String {
     line.to_lowercase()
         .replace("one", "one1one")
         .replace("two", "two2two")
@@ -34,17 +34,16 @@ fn replace (line: &str) -> String {
         .replace("nine", "nine9nine")
 }
 
-fn get_number (line: &str) -> u32 {
+fn get_number(line: &str) -> u32 {
     let mut first = '\0';
     let mut last = '\0';
-    for  (_i, c) in line.chars().enumerate() {
-        if c.is_digit(10) && first == '\0'{
+    for (_i, c) in line.chars().enumerate() {
+        if c.is_digit(10) && first == '\0' {
             first = c;
             last = c;
+        } else if c.is_digit(10) {
+            last = c;
         }
-        else if c.is_digit(10) {
-			last = c;
-		}
     }
     first.to_digit(10).unwrap() * 10 + last.to_digit(10).unwrap()
 }
@@ -66,15 +65,15 @@ fn wait_exit() {
     stdin.read_line(&mut buffer).expect("Cannot read line");
 }
 
-
 #[test]
 fn it_works_1() {
-  let input = r#"
+    let input = r#"
     1abc2
     pqr3stu8vwx
     a1b2c3d4e5f
     treb7uchet
-    "#.trim();
+    "#
+    .trim();
 
     let sum = trebuchet(input.to_string());
     assert_eq!(sum, 142);
@@ -82,7 +81,7 @@ fn it_works_1() {
 
 #[test]
 fn it_works_2() {
-  let input = r#"
+    let input = r#"
     two1nine
     eightwothree
     abcone2threexyz
@@ -90,7 +89,8 @@ fn it_works_2() {
     4nineeightseven2
     zoneight234
     7pqrstsixteen
-    "#.trim();
+    "#
+    .trim();
 
     let sum = trebuchet(input.to_string());
     assert_eq!(sum, 281);
