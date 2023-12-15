@@ -17,8 +17,24 @@ fn main() {
     };
 
     let (schema, parts) = gear_ratio(content);
-    let sum = validate_parts(&parts, &schema);
-    println!("sum: {}", sum);
+
+    let mut sum : u64 = 0;
+
+    for p in parts {
+        if p.symbol != '*' || p.numbers.len() != 2 {
+            continue
+        } 
+        let mut prod :u64 = 1; 
+		for n in p.numbers {
+            prod *= n.number as u64;
+            print!("{:10}-", n.number);
+        }
+        sum += prod;
+        println!("={:10} ** {:10}", prod, sum);
+
+	}
+    println!("{}", sum);
+
     wait_exit();
 }
 
