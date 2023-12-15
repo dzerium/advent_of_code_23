@@ -90,7 +90,7 @@ pub fn gear_ratio(content: String) -> (Vec<Vec<char>>, Vec<Gear>) {
     let mut parts = Vec::<Gear>::new();
 
     content
-        .split('\n')
+        .lines()
         .into_iter()
         .enumerate()
         .for_each(|(_i, line)| {
