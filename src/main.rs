@@ -18,6 +18,7 @@ fn main() {
 
     let record = get_card(content);
     println!("{}", get_worth(&record));
+    println!("{}", get_total_copies(record));
 
     wait_exit();
 }

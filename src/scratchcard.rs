@@ -3,54 +3,72 @@ use sscanf::scanf;
 
 #[derive(Debug)]
 pub struct Record {
+    number: u32,
     winning_numbers: Vec<u32>,
     own_numbers: Vec<u32>,
+    matches: u32,
+    copies: u32,
 }
 
-pub fn get_card(content: String) -> Vec<Record> {
-    let mut record = Vec::<Record>::new();
-    let re = Regex::new(r"\d+").unwrap();
+impl Record {
+    fn new (number: u32, winning_numbers: &str, own_numbers: &str) -> Record {
+        let re = Regex::new(r"\d+").unwrap();
 
-    content.lines().into_iter().for_each(|line| {
-        let parsed = scanf!(line.trim(), "Card{}{}:{}|{}", str, u32, str, str);
-        println!("{:?}", parsed);
-        if let Ok((_spaces, _number, winning_numbers, own_numbers)) = parsed {
-            let winning_numbers: Vec<u32> = re
-                .find_iter(winning_numbers)
-                .filter_map(|x| x.as_str().parse().ok())
-                .collect();
-            let own_numbers: Vec<u32> = re
-                .find_iter(own_numbers)
-                .filter_map(|x| x.as_str().parse().ok())
-                .collect();
+        let winning_numbers: Vec<u32> = re.find_iter(winning_numbers).filter_map(|x| x.as_str().parse().ok()).collect();
+        let own_numbers: Vec<u32> = re.find_iter(own_numbers).filter_map(|x| x.as_str().parse().ok()).collect();
+        let matches = own_numbers.iter().filter(|x| winning_numbers.contains(x)).collect::<Vec<&u32>>().len() as u32;
 
-            record.push(Record {
-                winning_numbers,
-                own_numbers,
-            });
-        }
-    });
-    record
+		Record {
+			number,
+			winning_numbers,
+			own_numbers,
+			matches,
+			copies: 1,
+		}
+	}
 }
 
-pub fn get_worth(record: &Vec<Record>) -> u32 {
+
+pub fn get_card (content: String) -> Vec::<Record> {
+    let mut records = Vec::<Record>::new();
+
+    content
+        .lines()
+        .into_iter()
+        .for_each(| line | {
+            let parsed = scanf!(line.trim(), "Card{}{}:{}|{}", str, u32,str,str);
+            println!("{:?}", parsed);
+            if let Ok((_spaces, number, winning_numbers, own_numbers)) = parsed {
+                let record = Record::new(number, winning_numbers, own_numbers);
+                records.push(record);
+			}
+        });
+    records
+}
+
+pub fn get_worth (record: &Vec<Record>) -> u32 {
     let mut sum: u32 = 0;
     for r in record {
-        let paired: Vec<&u32> = r
-            .own_numbers
-            .iter()
-            .filter(|x| r.winning_numbers.contains(x))
-            .collect::<Vec<&u32>>();
-        let count = paired.len() as u32;
-
-        let point = if count > 1 {
-            (2 as u32).pow(count - 1)
-        } else {
-            count
-        };
+        let point = if r.matches > 1 { (2 as u32).pow(r.matches - 1) } else { r.matches };
         sum += point;
-    }
+	}
     sum
+}
+
+pub fn get_total_copies (mut records: Vec<Record>) -> u32 {
+    let mut i: usize = 0; 
+
+    while i < records.len() {
+        if (records[i].matches > 0) {
+            let mut j :usize = 1;
+		    while j <= (records[i].matches) as usize && i + j < records.len(){
+                records[i + j].copies += records[i].copies;
+		        j += 1;
+            }
+        }
+		i += 1;
+	}
+	records.iter().map(|x| x.copies).sum()
 }
 
 #[test]
@@ -65,6 +83,7 @@ fn recursion() {
         "#
     .trim();
 
-    let record = get_card(input.to_string());
-    println!("{}", get_worth(&record));
+    let mut records = get_card(input.to_string());
+    assert!(get_worth(&records) == 13);
+    println!("{}", get_total_copies(records));
 }
